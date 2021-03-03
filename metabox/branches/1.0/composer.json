@@ -1,0 +1,59 @@
+{
+  "name": "pollen-solutions/metabox",
+  "description": "Pollen Metabox Component",
+  "homepage": "https://www.presstify.com/pollen-solutions/metabox/",
+  "keywords": [
+    "pollen-solutions",
+    "component"
+  ],
+  "time": "2021-03-03",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jordy Manner",
+      "email": "jordy@presstify.com",
+      "role": "Developper"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://composer.presstify.com/pollen-solutions/"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "composer/composer": "^2.0",
+    "composer/installers": "~1.0",
+    "pollen-solutions/http": "^1.0",
+    "pollen-solutions/field": "^1.0",
+    "pollen-solutions/partial": "^1.0",
+    "pollen-solutions/routing": "^1.0",
+    "pollen-solutions/support": "^1.0",
+    "pollen-solutions/view": "^1.0",
+    "ramsey/uuid": "^4.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pollen\\Metabox\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Pollen\\Metabox\\Test\\": "tests"
+    }
+  },
+  "suggest": {
+    "pollen-solutions/container" : "Pollen Container Component - PSR-11 ready Dependencies Injection Container"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
