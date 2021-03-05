@@ -7,7 +7,7 @@ namespace Pollen\Metabox;
 use Closure;
 use InvalidArgumentException;
 use Pollen\Http\JsonResponse;
-use Pollen\Http\JsonResponseInterface;
+use Pollen\Http\ResponseInterface;
 use Pollen\Support\Arr;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ParamsBagDelegateTrait;
@@ -289,9 +289,9 @@ class MetaboxDriver implements MetaboxDriverInterface
     /**
      * @inheritDoc
      */
-    public function getXhrUrl(array $params = []): string
+    public function getXhrUrl(array $params = [], ?string $controller = null): string
     {
-        return $this->metabox()->getXhrRouteUrl($this->getUuid(), null, $params);
+        return $this->metabox()->getXhrRouteUrl($this->getUuid(), $controller, $params);
     }
 
     /**
@@ -590,7 +590,7 @@ class MetaboxDriver implements MetaboxDriverInterface
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): JsonResponseInterface
+    public function xhrResponse(...$args): ResponseInterface
     {
         return new JsonResponse(
             [

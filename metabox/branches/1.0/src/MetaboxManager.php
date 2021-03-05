@@ -493,7 +493,7 @@ class MetaboxManager implements MetaboxManagerInterface
             );
 
             if (!file_exists($this->resourcesBaseDir)) {
-                throw new RuntimeException('Field ressources directory unreachable');
+                throw new RuntimeException('Metabox ressources directory unreachable');
             }
         }
 

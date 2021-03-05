@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Pollen\Metabox;
 
 use Closure;
-use Pollen\Http\JsonResponseInterface;
+use Pollen\Http\ResponseInterface;
 use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagDelegateTraitInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
@@ -142,10 +142,11 @@ interface MetaboxDriverInterface extends BootableTraitInterface, MetaboxProxyInt
      * Récupération de l'url de traitement des requêtes XHR.
      *
      * @param array $params
+     * @param string|null $controller
      *
      * @return string
      */
-    public function getXhrUrl(array $params = []): string;
+    public function getXhrUrl(array $params = [], ?string $controller = null): string;
 
     /**
      * Traitement.
@@ -320,7 +321,7 @@ interface MetaboxDriverInterface extends BootableTraitInterface, MetaboxProxyInt
      *
      * @param array ...$args
      *
-     * @return JsonResponseInterface
+     * @return ResponseInterface
      */
-    public function xhrResponse(...$args): JsonResponseInterface;
+    public function xhrResponse(...$args): ResponseInterface;
 }
