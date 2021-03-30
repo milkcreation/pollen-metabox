@@ -342,12 +342,17 @@ class MetaboxManager implements MetaboxManagerInterface
         } catch (Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
+
         if (!isset($context) || !is_object($context) || !($context instanceof MetaboxContextInterface)) {
             throw new RuntimeException(sprintf('Unable to define MetaboxContext with alias [%s]', $alias));
         }
-        return $this->contexts[$alias] = $context->setAlias($alias)->setParams(
+
+        $this->contexts[$alias] = $context->setAlias($alias);
+        $this->contexts[$alias]->setParams(
             array_merge($context->defaultParams(), $this->config("context.{$alias}", []), $params)
-        )->boot();
+        );
+
+        return $this->contexts[$alias]->boot();
     }
 
     /**
@@ -397,12 +402,17 @@ class MetaboxManager implements MetaboxManagerInterface
         } catch (Exception $e) {
             throw new RuntimeException($e->getMessage());
         }
+
         if (!isset($screen) || !is_object($screen) || !($screen instanceof MetaboxScreenInterface)) {
             throw new RuntimeException(sprintf('Unable to define MetaboxScreen with alias [%s]', $alias));
         }
-        return $this->screens[$alias] = $screen->setAlias($alias)->setParams(
+
+        $this->screens[$alias] = $screen->setAlias($alias);
+        $this->screens[$alias]->setParams(
             array_merge($screen->defaultParams(), $this->config("screen.{$alias}", []), $params)
-        )->boot();
+        );
+
+        return $this->screens[$alias]->boot();
     }
 
     /**
@@ -642,10 +652,11 @@ class MetaboxManager implements MetaboxManagerInterface
             throw new RuntimeException(sprintf('Unable to define MetaboxDriver with alias [%s]', $alias));
         }
 
-        return $driver
+        $driver
             ->setAlias($alias)
             ->setUuid($uuid)
-            ->setConfig(array_merge($this->config("driver.{$alias}", []), $config))
-            ->boot();
+            ->setConfig(array_merge($this->config("driver.{$alias}", []), $config));
+
+        return $driver->boot();
     }
 }
