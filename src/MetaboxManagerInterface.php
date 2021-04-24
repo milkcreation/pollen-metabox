@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace Pollen\Metabox;
 
 use Closure;
-use League\Route\Http\Exception\NotFoundException;
 use Pollen\Http\ResponseInterface;
 use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ConfigBagAwareTraitInterface;
+use Pollen\Support\Concerns\ResourcesAwareTraitInterface;
 use Pollen\Support\Proxy\ContainerProxyInterface;
 use Pollen\Support\Proxy\RouterProxyInterface;
+use Pollen\Routing\Exception\NotFoundException;
 
 interface MetaboxManagerInterface extends
     BootableTraitInterface,
     ConfigBagAwareTraitInterface,
+    ResourcesAwareTraitInterface,
     ContainerProxyInterface,
     RouterProxyInterface
 {
@@ -134,24 +136,6 @@ interface MetaboxManagerInterface extends
      * @return string
      */
     public function render(string $contextAlias, ...$args): string;
-
-    /**
-     * Chemin absolu vers une ressource (fichier|répertoire).
-     *
-     * @param string|null $path Chemin relatif vers la ressource.
-     *
-     * @return string
-     */
-    public function resources(?string $path = null): string;
-
-    /**
-     * Définition du chemin absolu vers le répertoire des ressources.
-     *
-     * @return static
-     * @var string $resourceBaseDir
-     *
-     */
-    public function setResourcesBaseDir(string $resourceBaseDir): MetaboxManagerInterface;
 
     /**
      * Définition du contexte de base.
