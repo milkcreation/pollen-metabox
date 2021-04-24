@@ -6,7 +6,6 @@ namespace Pollen\Metabox;
 
 use Exception;
 use Illuminate\Support\Collection;
-use League\Route\Http\Exception\NotFoundException;
 use Pollen\Http\ResponseInterface;
 //use Pollen\Metabox\Contexts\TabContext;
 //use Pollen\Metabox\Drivers\ColorDriver;
@@ -24,19 +23,20 @@ use Pollen\Http\ResponseInterface;
 use Pollen\Routing\RouteInterface;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ConfigBagAwareTrait;
+use Pollen\Support\Concerns\ResourcesAwareTrait;
 use Pollen\Support\Exception\ManagerRuntimeException;
-use Pollen\Support\Filesystem;
 use Pollen\Support\Proxy\ContainerProxy;
 use Pollen\Support\Proxy\RouterProxy;
+use Pollen\Routing\Exception\NotFoundException;
 use Psr\Container\ContainerInterface as Container;
 use Ramsey\Uuid\Uuid;
 use RuntimeException;
-
 
 class MetaboxManager implements MetaboxManagerInterface
 {
     use BootableTrait;
     use ConfigBagAwareTrait;
+    use ResourcesAwareTrait;
     use ContainerProxy;
     use RouterProxy;
 
@@ -128,12 +128,6 @@ class MetaboxManager implements MetaboxManagerInterface
     protected $driversMap = [];
 
     /**
-     * Chemin vers le répertoire des ressources.
-     * @var string|null
-     */
-    protected $resourcesBaseDir;
-
-    /**
      * Liste des écrans assignés.
      * @var MetaboxScreen[]
      */
@@ -162,6 +156,8 @@ class MetaboxManager implements MetaboxManagerInterface
         if ($container !== null) {
             $this->setContainer($container);
         }
+
+        $this->setResourcesBaseDir(dirname(__DIR__) . '/resources');
 
         if ($this->config('boot_enabled', true)) {
             $this->boot();
@@ -350,7 +346,7 @@ class MetaboxManager implements MetaboxManagerInterface
 
         $this->contexts[$alias] = $context->setAlias($alias);
         $this->contexts[$alias]->setParams(
-            array_merge($context->defaultParams(), $this->config("context.{$alias}", []), $params)
+            array_merge($context->defaultParams(), $this->config("context.$alias", []), $params)
         );
 
         return $this->contexts[$alias]->boot();
@@ -410,7 +406,7 @@ class MetaboxManager implements MetaboxManagerInterface
 
         $this->screens[$alias] = $screen->setAlias($alias);
         $this->screens[$alias]->setParams(
-            array_merge($screen->defaultParams(), $this->config("screen.{$alias}", []), $params)
+            array_merge($screen->defaultParams(), $this->config("screen.$alias", []), $params)
         );
 
         return $this->screens[$alias]->boot();
@@ -496,24 +492,6 @@ class MetaboxManager implements MetaboxManagerInterface
     /**
      * @inheritDoc
      */
-    public function resources(?string $path = null): string
-    {
-        if ($this->resourcesBaseDir === null) {
-            $this->resourcesBaseDir = Filesystem::normalizePath(realpath(
-                                                                    dirname(__DIR__) . '/resources/')
-            );
-
-            if (!file_exists($this->resourcesBaseDir)) {
-                throw new RuntimeException('Metabox ressources directory unreachable');
-            }
-        }
-
-        return is_null($path) ? $this->resourcesBaseDir : $this->resourcesBaseDir . Filesystem::normalizePath($path);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function setBaseContext(string $baseContext): MetaboxManagerInterface
     {
         $this->baseContext = $baseContext;
@@ -527,16 +505,6 @@ class MetaboxManager implements MetaboxManagerInterface
     public function setBaseDriver(string $baseDriver): MetaboxManagerInterface
     {
         $this->baseDriver = $baseDriver;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setResourcesBaseDir(string $resourceBaseDir): MetaboxManagerInterface
-    {
-        $this->resourcesBaseDir = Filesystem::normalizePath($resourceBaseDir);
 
         return $this;
     }
@@ -585,7 +553,9 @@ class MetaboxManager implements MetaboxManagerInterface
             $driver = $this->_fetchDriver($metabox);
         } catch (Exception $e) {
             throw new NotFoundException(
-                sprintf('MetaboxDriver [%s] return exception : %s', $metabox, $e->getMessage())
+                sprintf('MetaboxDriver [%s] return exception : %s', $metabox, $e->getMessage()),
+                'MetaboxDriver Error',
+                $e
             );
         }
 
@@ -594,13 +564,16 @@ class MetaboxManager implements MetaboxManagerInterface
                 return $driver->{$controller}(...$args);
             } catch (Exception $e) {
                 throw new NotFoundException(
-                    sprintf('MetaboxDriver [%s] Controller [%s] call return exception', $controller, $metabox)
+                    sprintf('MetaboxDriver [%s] Controller [%s] call return exception', $controller, $metabox),
+                    'MetaboxDriver Error',
+                    $e
                 );
             }
         }
 
         throw new NotFoundException(
-            sprintf('MetaboxDriver [%s] unreachable', $metabox)
+            sprintf('MetaboxDriver [%s] unreachable', $metabox),
+            'MetaboxDriver Error'
         );
     }
 
@@ -656,7 +629,7 @@ class MetaboxManager implements MetaboxManagerInterface
         $driver
             ->setAlias($alias)
             ->setUuid($uuid)
-            ->setConfig(array_merge($this->config("driver.{$alias}", []), $config));
+            ->setConfig(array_merge($this->config("driver.$alias", []), $config));
 
         return $driver->boot();
     }
