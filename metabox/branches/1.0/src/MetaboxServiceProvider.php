@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Pollen\Metabox;
 
-use Pollen\Container\BaseServiceProvider;
+use Pollen\Container\BootableServiceProvider;
 use Pollen\Metabox\Contexts\TabContext;
 use Pollen\Metabox\Drivers\ColorDriver;
 use Pollen\Metabox\Drivers\CustomHeaderDriver;
@@ -19,7 +19,7 @@ use Pollen\Metabox\Drivers\SlidefeedDriver;
 use Pollen\Metabox\Drivers\SubtitleDriver;
 use Pollen\Metabox\Drivers\VideofeedDriver;
 
-class MetaboxServiceProvider extends BaseServiceProvider
+class MetaboxServiceProvider extends BootableServiceProvider
 {
     /**
      * @inheritDoc
