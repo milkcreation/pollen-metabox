@@ -7,19 +7,19 @@ namespace Pollen\Metabox;
 use Exception;
 use Illuminate\Support\Collection;
 use Pollen\Http\ResponseInterface;
-//use Pollen\Metabox\Contexts\TabContext;
-//use Pollen\Metabox\Drivers\ColorDriver;
-//use Pollen\Metabox\Drivers\CustomHeaderDriver;
-//use Pollen\Metabox\Drivers\ExcerptDriver;
-//use Pollen\Metabox\Drivers\FilefeedDriver;
-//use Pollen\Metabox\Drivers\IconDriver;
-//use Pollen\Metabox\Drivers\ImagefeedDriver;
-//use Pollen\Metabox\Drivers\OrderDriver;
-//use Pollen\Metabox\Drivers\PostfeedDriver;
-//use Pollen\Metabox\Drivers\RelatedTermDriver;
-//use Pollen\Metabox\Drivers\SlidefeedDriver;
-//use Pollen\Metabox\Drivers\SubtitleDriver;
-//use Pollen\Metabox\Drivers\VideofeedDriver;
+use Pollen\Metabox\Contexts\TabContext;
+use Pollen\Metabox\Drivers\ColorDriver;
+use Pollen\Metabox\Drivers\CustomHeaderDriver;
+use Pollen\Metabox\Drivers\ExcerptDriver;
+use Pollen\Metabox\Drivers\FilefeedDriver;
+use Pollen\Metabox\Drivers\IconDriver;
+use Pollen\Metabox\Drivers\ImagefeedDriver;
+use Pollen\Metabox\Drivers\OrderDriver;
+use Pollen\Metabox\Drivers\PostfeedDriver;
+use Pollen\Metabox\Drivers\RelatedTermDriver;
+use Pollen\Metabox\Drivers\SlidefeedDriver;
+use Pollen\Metabox\Drivers\SubtitleDriver;
+use Pollen\Metabox\Drivers\VideofeedDriver;
 use Pollen\Routing\RouteInterface;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ConfigBagAwareTrait;
@@ -51,18 +51,18 @@ class MetaboxManager implements MetaboxManagerInterface
      * @var array
      */
     private $defaultDrivers = [
-        //'color'         => ColorDriver::class,
-        //'custom-header' => CustomHeaderDriver::class,
-        //'excerpt'       => ExcerptDriver::class,
-        //'filefeed'      => FilefeedDriver::class,
-        //'icon'          => IconDriver::class,
-        //'imagefeed'     => ImagefeedDriver::class,
-        //'order'         => OrderDriver::class,
-        //'postfeed'      => PostfeedDriver::class,
-        //'related-term'  => RelatedTermDriver::class,
-        //'slidefeed'     => SlidefeedDriver::class,
-        //'subtitle'      => SubtitleDriver::class,
-        //'videofeed'     => VideofeedDriver::class,
+        'color'         => ColorDriver::class,
+        'custom-header' => CustomHeaderDriver::class,
+        'excerpt'       => ExcerptDriver::class,
+        'filefeed'      => FilefeedDriver::class,
+        'icon'          => IconDriver::class,
+        'imagefeed'     => ImagefeedDriver::class,
+        'order'         => OrderDriver::class,
+        'postfeed'      => PostfeedDriver::class,
+        'related-term'  => RelatedTermDriver::class,
+        'slidefeed'     => SlidefeedDriver::class,
+        'subtitle'      => SubtitleDriver::class,
+        'videofeed'     => VideofeedDriver::class,
     ];
 
     /**
@@ -70,7 +70,7 @@ class MetaboxManager implements MetaboxManagerInterface
      * @var array
      */
     private $defaultContexts = [
-        //'tab' => TabContext::class,
+        'tab' => TabContext::class,
     ];
 
     /**
