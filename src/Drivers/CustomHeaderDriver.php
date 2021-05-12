@@ -21,8 +21,8 @@ class CustomHeaderDriver extends MetaboxDriver implements CustomHeaderDriverInte
         return array_merge(
             parent::defaultParams(),
             [
-                'media_library_title'  => __('Personnalisation de l\'image d\'entête', 'tify'),
-                'media_library_button' => __('Utiliser comme image d\'entête', 'tify'),
+                'media_library_title'  => 'Personnalisation de l\'image d\'entête',
+                'media_library_button' => 'Utiliser comme image d\'entête',
             ]
         );
     }
@@ -32,7 +32,7 @@ class CustomHeaderDriver extends MetaboxDriver implements CustomHeaderDriverInte
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Image d\'entête', 'tify');
+        return $this->title ?? 'Image d\'entête';
     }
 
     /**
@@ -40,6 +40,6 @@ class CustomHeaderDriver extends MetaboxDriver implements CustomHeaderDriverInte
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/custom-header');
+        return $this->metabox()->resources('/views/drivers/custom-header');
     }
 }

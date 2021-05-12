@@ -18,7 +18,7 @@ class IconDriver extends MetaboxDriver implements IconDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Icône représentative', 'tify');
+        return $this->title ?? 'Icône représentative';
     }
 
     /**
@@ -26,6 +26,6 @@ class IconDriver extends MetaboxDriver implements IconDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/icon');
+        return $this->metabox()->resources('/views/drivers/icon');
     }
 }

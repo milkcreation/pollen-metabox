@@ -12,6 +12,7 @@ use Pollen\Support\Arr;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ParamsBagDelegateTrait;
 use Pollen\Support\ParamsBag;
+use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Support\Proxy\MetaboxProxy;
 use Pollen\View\ViewEngine;
 use Pollen\View\ViewEngineInterface;
@@ -19,6 +20,7 @@ use Pollen\View\ViewEngineInterface;
 class MetaboxDriver implements MetaboxDriverInterface
 {
     use BootableTrait;
+    use HttpRequestProxy;
     use MetaboxProxy;
     use ParamsBagDelegateTrait;
 

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Pollen\Metabox\Drivers;
 
+use Pollen\Http\JsonResponse;
+use Pollen\Http\ResponseInterface;
 use Pollen\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Request;
 
 class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
 {
@@ -36,7 +37,7 @@ class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Partage de fichier', 'tify');
+        return $this->title ?? 'Partage de fichier';
     }
 
     /**
@@ -50,10 +51,10 @@ class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
     public function item($index, ?int $value = null): array
     {
         $name = $this->getName();
-        $index = !is_numeric($index) ? $index : uniqid();
+        $index = !is_numeric($index) ? $index : uniqid('', true);
 
         return [
-            'name'  => $this->get('max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
+            'name'  => $this->get('max', -1) === 1 ? $name .'[]' : $name . "[$index]",
             'value' => $value,
             'index' => $index,
             'icon'  => wp_get_attachment_image($value, [48, 64], true),
@@ -79,7 +80,7 @@ class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
             'up'     => 'MetaboxFilefeed-itemSortUp ThemeFeed-itemSortUp',
         ];
         foreach ($defaultClasses as $k => $v) {
-            $this->set(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+            $this->set(["classes.$k" => sprintf($this->get("classes.$k", '%s'), $v)]);
         }
 
         $this->set(
@@ -120,7 +121,7 @@ class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
                     ),
                     'classes'   => $this->get('classes', []),
                     'media'     => [
-                        'multiple' => ($this->get('max', -1) === 1 ? false : true),
+                        'multiple' => !($this->get('max', -1) === 1),
                         'library'  => [
                             'type' => $this->get('filetype'),
                         ],
@@ -149,35 +150,35 @@ class FilefeedDriver extends MetaboxDriver implements FilefeedDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/filefeed');
+        return $this->metabox()->resources('/views/drivers/filefeed');
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): array
+    public function xhrResponse(...$args): ResponseInterface
     {
-        $index = Request::input('index');
-        $max = Request::input('max', 0);
-        $value = (int)Request::input('value');
+        $index = $this->httpRequest()->input('index');
+        $max = $this->httpRequest()->input('max', 0);
+        $value = (int)$this->httpRequest()->input('value');
 
         if (($max > 0) && ($index >= $max)) {
-            return [
+            return new JsonResponse([
                 'success' => false,
-                'data'    => __('Nombre maximum de fichiers partagés atteint.', 'tify'),
-            ];
-        } else {
-            $this->setName(Request::input('name', ''));
-            $this->setViewer(Request::input('viewer', []));
-            $this->set(
-                [
-                    'max'    => $max,
-                ]
-            );
-            return [
-                'success' => true,
-                'data'    => $this->view('item-wrap', $this->item($index, $value)),
-            ];
+                'data'    => 'Nombre maximum de fichiers partagés atteint.',
+            ]);
         }
+        $this->setName($this->httpRequest()->input('name', ''));
+        $this->setViewer($this->httpRequest()->input('viewer', []));
+        $this->set(
+            [
+                'max' => $max,
+            ]
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'data'    => $this->view('item-wrap', $this->item($index, $value)),
+        ]);
     }
 }

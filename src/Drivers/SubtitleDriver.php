@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Pollen\Metabox\Drivers;
 
 use Pollen\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Field;
+use Pollen\Support\Proxy\FieldProxy;
 
 class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
 {
+    use FieldProxy;
+
     /**
      * @inheritDoc
      */
@@ -24,7 +26,7 @@ class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
             [
                 'attrs' => [
                     'class'       => 'widefat',
-                    'placeholder' => __('Sous-titre', 'tify'),
+                    'placeholder' => 'Sous-titre',
                     'style'       => 'margin-top:10px;margin-bottom:20px;background-color:#fff;font-size:1.4em;' .
                         'height:1.7em;line-height:100%;margin:10 0 15px;outline:0 none;padding:3px 8px;width:100%;',
                 ],
@@ -37,7 +39,7 @@ class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Sous-titre', 'tify');
+        return $this->title ?? 'Sous-titre';
     }
 
     /**
@@ -45,7 +47,7 @@ class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
      */
     public function render(): string
     {
-        return Field::get(
+        return $this->field(
             'text',
             array_merge(
                 $this->all(),
@@ -62,6 +64,6 @@ class SubtitleDriver extends MetaboxDriver implements SubtitleDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/subtitle');
+        return $this->metabox()->resources('/views/drivers/subtitle');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost $item
+ * @var Pollen\WpPost\WpPostQueryInterface $item
  */
 ?>
 <li data-control="metabox-postfeed.item">

@@ -8,10 +8,15 @@ use Closure;
 use Pollen\Http\ResponseInterface;
 use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagDelegateTraitInterface;
+use Pollen\Support\Proxy\HttpRequestProxyInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
 use Pollen\View\ViewEngineInterface;
 
-interface MetaboxDriverInterface extends BootableTraitInterface, MetaboxProxyInterface, ParamsBagDelegateTraitInterface
+interface MetaboxDriverInterface extends
+    BootableTraitInterface,
+    HttpRequestProxyInterface,
+    MetaboxProxyInterface,
+    ParamsBagDelegateTraitInterface
 {
     /**
      * Délégation d'appel des méthodes du ParamBagTrait.

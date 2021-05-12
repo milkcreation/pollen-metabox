@@ -18,7 +18,7 @@ class ColorDriver extends MetaboxDriver implements ColorDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Couleur', 'tify');
+        return $this->title ?? 'Couleur';
     }
 
     /**
@@ -26,6 +26,6 @@ class ColorDriver extends MetaboxDriver implements ColorDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/color');
+        return $this->metabox()->resources('/views/drivers/color');
     }
 }

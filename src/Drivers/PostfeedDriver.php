@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Pollen\Metabox\Drivers;
 
+use Pollen\Http\JsonResponse;
+use Pollen\Http\ResponseInterface;
 use Pollen\Metabox\MetaboxDriver;
-use tiFy\Support\Proxy\Request;
-use tiFy\Wordpress\Query\QueryPost;
+use Pollen\WpPost\WpPostQuery;
 
 class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
 {
@@ -26,7 +27,7 @@ class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
                 'classes'     => [],
                 'max'         => -1,
                 'suggest'     => [],
-                'placeholder' => __('Recherche de contenu associé ...', 'tify'),
+                'placeholder' => 'Recherche de contenu associé ...',
                 'post_type'   => 'any',
                 'post_status' => 'publish',
                 'query_args'  => [],
@@ -41,7 +42,7 @@ class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Éléments en relation', 'tify');
+        return $this->title ?? 'Éléments en relation';
     }
 
     /**
@@ -53,7 +54,7 @@ class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
 
         if (is_array($this->getValue('items'))) {
             foreach ($this->getValue('items') as $id) {
-                if ($item = QueryPost::createFromId((int)$id)) {
+                if ($item = WpPostQuery::createFromId((int)$id)) {
                     $items[] = $item;
                 }
             }
@@ -74,7 +75,7 @@ class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
             'up'      => 'MetaboxPostfeed-itemSortUp ThemeFeed-itemSortUp',
         ];
         foreach ($defaultClasses as $k => $v) {
-            $this->set(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+            $this->set(["classes.$k" => sprintf($this->get("classes.$k", '%s'), $v)]);
         }
 
         $this->set(
@@ -132,40 +133,47 @@ class PostfeedDriver extends MetaboxDriver implements PostfeedDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/postfeed');
+        return $this->metabox()->resources('/views/drivers/postfeed');
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): array
+    public function xhrResponse(...$args): ResponseInterface
     {
-        $index = Request::input('index');
-        $max = Request::input('max', 0);
+        $index = $this->httpRequest()->input('index');
+        $max = $this->httpRequest()->input('max', 0);
 
         if (($max > 0) && ($index >= $max)) {
-            return [
-                'success' => false,
-                'data'    => __('Nombre maximum de fichiers partagés atteint.', 'tify'),
-            ];
-        } elseif ($item = QueryPost::createFromId((int)Request::input('post_id'))) {
-            $this->setName(Request::input('name', ''));
-            $this->setViewer(Request::input('viewer', []));
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'data'    => 'Nombre maximum de fichiers partagés atteint.',
+                ]
+            );
+        }
+
+        if ($item = WpPostQuery::createFromId((int)$this->httpRequest()->input('post_id'))) {
+            $this->setName($this->httpRequest()->input('name', ''));
+            $this->setViewer($this->httpRequest()->input('viewer', []));
             $this->set(
                 [
                     'max'    => $max,
-                    'viewer' => Request::input('viewer', []),
+                    'viewer' => $this->httpRequest()->input('viewer', []),
                 ]
             );
-            return [
-                'success' => true,
-                'data'    => $this->view('item-wrap', compact('item')),
-            ];
-        } else {
-            return [
-                'success' => false,
-                'data'    => __('Impossible de récupérer le contenu associé', 'tify'),
-            ];
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'data'    => $this->view('item-wrap', compact('item')),
+                ]
+            );
         }
+        return new JsonResponse(
+            [
+                'success' => false,
+                'data'    => 'Impossible de récupérer le contenu associé',
+            ]
+        );
     }
 }

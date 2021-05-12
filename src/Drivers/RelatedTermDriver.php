@@ -35,7 +35,7 @@ class RelatedTermDriver extends MetaboxDriver implements RelatedTermDriverInterf
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Catégories associées', 'tify');
+        return $this->title ?? 'Catégories associées';
     }
 
     /**
@@ -81,9 +81,9 @@ class RelatedTermDriver extends MetaboxDriver implements RelatedTermDriverInterf
                         'content' => $t->name,
                     ],
                     'checkbox' => [
-                        'name'    => "tax_input[{$t->taxonomy}][]",
+                        'name'    => "tax_input[$t->taxonomy][]",
                         'value'   => is_taxonomy_hierarchical($t->taxonomy) ? $t->term_id : $t->name,
-                        'checked' => in_array($t->term_id, $checked),
+                        'checked' => in_array($t->term_id, $checked, true),
                     ],
                 ];
             }
@@ -95,9 +95,9 @@ class RelatedTermDriver extends MetaboxDriver implements RelatedTermDriverInterf
                         'content' => $t->name,
                     ],
                     'radio' => [
-                        'name'    => "tax_input[{$t->taxonomy}][]",
+                        'name'    => "tax_input[$t->taxonomy][]",
                         'value'   => is_taxonomy_hierarchical($t->taxonomy) ? $t->term_id : $t->name,
-                        'checked' => in_array($t->term_id, $checked),
+                        'checked' => in_array($t->term_id, $checked, true),
                     ],
                 ];
             }
@@ -113,6 +113,6 @@ class RelatedTermDriver extends MetaboxDriver implements RelatedTermDriverInterf
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/related-term');
+        return $this->metabox()->resources('/views/drivers/related-term');
     }
 }
