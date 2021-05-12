@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Pollen\Metabox\Drivers;
 
+use Pollen\Http\JsonResponse;
+use Pollen\Http\ResponseInterface;
 use Pollen\Metabox\MetaboxDriver;
 use tiFy\Support\Img;
-use tiFy\Support\Proxy\Request;
-use tiFy\Validation\Validator as v;
+use Pollen\Validation\Validator as v;
 
 class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
 {
@@ -39,7 +40,7 @@ class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Images', 'tify');
+        return $this->title ?? 'Images';
     }
 
     /**
@@ -53,7 +54,7 @@ class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
     public function item($index, $value): array
     {
         $name = $this->getName();
-        $index = !is_numeric($index) ? $index : uniqid();
+        $index = !is_numeric($index) ? $index : uniqid('', true);
 
         $src = '';
         if (is_numeric($value)) {
@@ -70,7 +71,7 @@ class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
 
         return [
             'index' => $index,
-            'name'  => $this->get('max', -1) === 1 ? "{$name}[]" : "{$name}[{$index}]",
+            'name'  => $this->get('max', -1) === 1 ? $name . '[]' : $name . "[$index]",
             'value' => $value,
             'src'   => $src,
         ];
@@ -104,7 +105,7 @@ class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
             'up'     => 'MetaboxImagefeed-itemSortUp ThemeFeed-itemSortUp',
         ];
         foreach ($defaultClasses as $k => $v) {
-            $this->set(["classes.{$k}" => sprintf($this->get("classes.{$k}", '%s'), $v)]);
+            $this->set(["classes.$k" => sprintf($this->get("classes.$k", '%s'), $v)]);
         }
 
         $this->set(
@@ -156,35 +157,36 @@ class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/imagefeed');
+        return $this->metabox()->resources('/views/drivers/imagefeed');
     }
 
     /**
      * @inheritDoc
      */
-    public function xhrResponse(...$args): array
+    public function xhrResponse(...$args): ResponseInterface
     {
-        $index = Request::input('index');
-        $max = Request::input('max', 0);
-        $value = Request::input('value', '');
+        $index = $this->httpRequest()->input('index');
+        $max = $this->httpRequest()->input('max', 0);
+        $value = $this->httpRequest()->input('value', '');
 
         if (($max > 0) && ($index >= $max)) {
-            return [
+            return new JsonResponse([
                 'success' => false,
-                'data'    => __('Nombre maximum d\'images atteint.', 'tify'),
-            ];
-        } else {
-            $this->setName(Request::input('name', ''));
-            $this->setViewer(Request::input('viewer', []));
-            $this->set(
-                [
-                    'max'    => $max,
-                ]
-            );
-            return [
-                'success' => true,
-                'data'    => $this->view('item-wrap', $this->item($index, $value)),
-            ];
+                'data'    => 'Nombre maximum d\'images atteint.',
+            ]);
         }
+
+        $this->setName($this->httpRequest()->input('name', ''));
+        $this->setViewer($this->httpRequest()->input('viewer', []));
+        $this->set(
+            [
+                'max' => $max,
+            ]
+        );
+
+        return new JsonResponse([
+            'success' => true,
+            'data'    => $this->view('item-wrap', $this->item($index, $value)),
+        ]);
     }
 }

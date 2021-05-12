@@ -18,7 +18,7 @@ class ExcerptDriver extends MetaboxDriver implements ExcerptDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Extrait', 'tify');
+        return $this->title ?? 'Extrait';
     }
 
     /**
@@ -26,6 +26,6 @@ class ExcerptDriver extends MetaboxDriver implements ExcerptDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/excerpt');
+        return $this->metabox()->resources('/views/drivers/excerpt');
     }
 }

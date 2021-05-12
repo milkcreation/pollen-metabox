@@ -1,7 +1,7 @@
 <?php
 /**
  * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost $item
+ * @var Pollen\WpPost\WpPostQueryInterface $item
  */
 ?>
 <?php if ($thumbnail = $item->getThumbnail('thumbnail', ['class' => 'MetaboxPostfeed-itemThumbImg'])) : ?>

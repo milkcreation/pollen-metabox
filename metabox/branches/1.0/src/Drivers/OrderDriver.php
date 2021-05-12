@@ -33,7 +33,7 @@ class OrderDriver extends MetaboxDriver implements OrderDriverInterface
      */
     public function getTitle(): string
     {
-        return $this->title ?? __('Ordre d\'affichage', 'tify');
+        return $this->title ?? 'Ordre d\'affichage';
     }
 
     /**
@@ -41,6 +41,6 @@ class OrderDriver extends MetaboxDriver implements OrderDriverInterface
      */
     public function viewDirectory(): string
     {
-        return $this->metaboxManager()->resources('/views/drivers/order');
+        return $this->metabox()->resources('/views/drivers/order');
     }
 }

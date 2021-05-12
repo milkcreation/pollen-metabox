@@ -1,12 +1,12 @@
 <?php
 /**
  * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
- * @var tiFy\Wordpress\Contracts\Query\QueryPost $item
+ * @var Pollen\WpPost\WpPostQueryInterface $item
  */
 ?>
 <div class="MetaboxPostfeed-itemInfoLine MetaboxPostfeed-itemInfoLine--post_type">
     <label><?php _e('Type :', 'tify'); ?></label>
-    <?php echo ucfirst($item->getType()->label('singular_name')); ?>
+    <?php echo ucfirst($item->getWpPostType()->label('singular_name')); ?>
 </div>
 <div class="MetaboxPostfeed-itemInfoLine MetaboxPostfeed-itemInfoLine--post_status">
     <label><?php _e('Statut :', 'tify'); ?></label>
