@@ -7,7 +7,7 @@ namespace Pollen\Metabox\Drivers;
 use Pollen\Http\JsonResponse;
 use Pollen\Http\ResponseInterface;
 use Pollen\Metabox\MetaboxDriver;
-use tiFy\Support\Img;
+use Pollen\Support\Img;
 use Pollen\Validation\Validator as v;
 
 class ImagefeedDriver extends MetaboxDriver implements ImagefeedDriverInterface
