@@ -10,7 +10,7 @@ use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagDelegateTraitInterface;
 use Pollen\Support\Proxy\HttpRequestProxyInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
-use Pollen\View\ViewEngineInterface;
+use Pollen\View\ViewInterface;
 
 interface MetaboxDriverInterface extends
     BootableTraitInterface,
@@ -310,7 +310,7 @@ interface MetaboxDriverInterface extends
      * @param string|null view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewEngineInterface|string
+     * @return ViewInterface|string
      */
     public function view(?string $view = null, array $data = []);
 

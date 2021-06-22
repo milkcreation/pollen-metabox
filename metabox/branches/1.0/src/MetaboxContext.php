@@ -7,8 +7,9 @@ namespace Pollen\Metabox;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ParamsBagAwareTrait;
 use Pollen\Support\Proxy\MetaboxProxy;
-use Pollen\View\ViewEngine;
-use Pollen\View\ViewEngineInterface;
+use Pollen\View\View;
+use Pollen\View\Engines\Plates\PlatesViewEngine;
+use Pollen\View\ViewInterface;
 
 class MetaboxContext implements MetaboxContextInterface
 {
@@ -18,27 +19,24 @@ class MetaboxContext implements MetaboxContextInterface
 
     /**
      * Alias de qualification.
-     * @var string
      */
-    protected $alias = '';
+    protected string $alias = '';
 
     /**
      * Liste des pilotes déclarés.
      * @var MetaboxDriverInterface[]|array
      */
-    protected $drivers = [];
+    protected array $drivers = [];
 
     /**
      * Instance du gestionnaire de gabarit d'affichage.
-     * @var ViewEngineInterface|null
      */
-    protected $viewEngine;
+    protected ?ViewInterface $view = null;
 
     /**
      * Instance de l'écran associé.
-     * @var MetaboxScreenInterface|null
      */
-    protected $screen;
+    protected ?MetaboxScreenInterface $screen = null;
 
     /**
      * @param MetaboxManagerInterface $metaboxManager
@@ -133,18 +131,22 @@ class MetaboxContext implements MetaboxContextInterface
      */
     public function view(?string $view = null, array $data = [])
     {
-        if ($this->viewEngine === null) {
-            $this->viewEngine = new ViewEngine();
+        if ($this->view === null) {
+            $this->view = View::createFromPlates(
+                function (PlatesViewEngine $platesViewEngine) {
+                    $platesViewEngine
+                        ->setTemplateClass(ContextTemplate::class)
+                        ->setDirectory($this->metabox()->resources("/views/contexts/{$this->getAlias()}"));
 
-            $this->viewEngine
-                ->setDirectory($this->metabox()->resources("/views/contexts/{$this->getAlias()}"))
-                ->setLoader(ContextViewLoader::class);
+                    return $platesViewEngine;
+                }
+            );
         }
 
         if (func_num_args() === 0) {
-            return $this->viewEngine;
+            return $this->view;
         }
 
-        return $this->viewEngine->render($view, $data);
+        return $this->view->render($view, $data);
     }
 }

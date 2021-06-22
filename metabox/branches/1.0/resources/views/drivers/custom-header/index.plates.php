@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  */
 echo $this->field(
-    'text-remaining',
+    'media-image',
     array_merge(
         $this->all(),
         [

@@ -7,7 +7,7 @@ namespace Pollen\Metabox;
 use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagAwareTraitInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
-use Pollen\View\ViewEngineInterface;
+use Pollen\View\ViewInterface;
 
 interface MetaboxContextInterface extends BootableTraitInterface, ParamsBagAwareTraitInterface, MetaboxProxyInterface
 {
@@ -79,7 +79,7 @@ interface MetaboxContextInterface extends BootableTraitInterface, ParamsBagAware
      * @param string|null $view Nom de qualification du gabarit.
      * @param array $data Liste des variables passées en argument.
      *
-     * @return ViewEngineInterface|string
+     * @return ViewInterface|string
      */
     public function view(?string $view = null, array $data = []);
 }

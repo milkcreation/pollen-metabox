@@ -11,9 +11,8 @@ class TabContext extends MetaboxContext implements TabContextInterface
 {
     /**
      * Onglet actif.
-     * @var string
      */
-    protected $active = '';
+    protected string $active = '';
 
     /**
      * @inheritDoc

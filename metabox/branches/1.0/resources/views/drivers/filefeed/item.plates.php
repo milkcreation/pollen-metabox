@@ -1,6 +1,6 @@
 <?php
 /**
- * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  */
 ?>
 <span class="MetaboxFilefeed-itemIcon">

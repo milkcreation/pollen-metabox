@@ -1,6 +1,6 @@
 <?php
 /**
- * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
+ * @var Pollen\Metabox\ContextTemplate $this
  */
 ?>
 <?php if ($items = $this->get('items', [])): ?>
