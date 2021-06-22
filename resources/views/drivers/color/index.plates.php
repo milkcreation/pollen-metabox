@@ -1,10 +1,9 @@
 <?php
-
 /**
- * @var Pollen\Metabox\MetaboxViewLoaderInterface $this
+ * @var Pollen\Metabox\MetaboxTemplate $this
  */
 echo $this->field(
-    'select-image',
+    'colorpicker',
     array_merge(
         $this->all(),
         [

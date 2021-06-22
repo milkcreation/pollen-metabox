@@ -14,8 +14,9 @@ use Pollen\Support\Concerns\ParamsBagDelegateTrait;
 use Pollen\Support\ParamsBag;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Support\Proxy\MetaboxProxy;
-use Pollen\View\ViewEngine;
-use Pollen\View\ViewEngineInterface;
+use Pollen\View\View;
+use Pollen\View\Engines\Plates\PlatesViewEngine;
+use Pollen\View\ViewInterface;
 
 class MetaboxDriver implements MetaboxDriverInterface
 {
@@ -26,39 +27,34 @@ class MetaboxDriver implements MetaboxDriverInterface
 
     /**
      * Instance du gestionnaire de configuration.
-     * @var ParamsBag
      */
-    private $configBag;
+    private ?ParamsBag $configBag = null;
 
     /**
      * Instance du contexte d'affichage.
-     * @var MetaboxContextInterface|null
      */
-    private $context;
+    private ?MetaboxContextInterface $context = null;
 
     /**
      * Instance de l'écran d'affichage.
-     * @var MetaboxScreenInterface|null
      */
-    private $screen;
+    private ?MetaboxScreenInterface $screen = null;
 
     /**
      * Identifiant de qualification unique.
-     * @var string;
      */
-    private $uuid;
+    private string $uuid = '';
 
     /**
      * Alias de qualification.
-     * @var string
      */
-    protected $alias = '';
+    protected string $alias = '';
 
     /**
      * Liste des arguments dynamiques passés en paramètres.
      * @var array
      */
-    protected $args = [];
+    protected array $args = [];
 
     /**
      * Valeur par défaut.
@@ -70,32 +66,20 @@ class MetaboxDriver implements MetaboxDriverInterface
      * Liste de fonction anonyme de traitement
      * @var Closure[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
-    /**
-     * @var string
-     */
-    protected $name = '';
+    protected string $name = '';
 
-    /**
-     * @var string|null
-     */
-    protected $parent;
+    protected ?string $parent = null;
 
-    /**
-     * @var int
-     */
-    protected $position = 0;
+    protected int $position = 0;
 
     /**
      * @var Closure|array|string|null
      */
     protected $render;
 
-    /**
-     * @var string|null
-     */
-    protected $title;
+    protected ?string $title = null;
 
     /**
      * Valeur courante.
@@ -107,13 +91,12 @@ class MetaboxDriver implements MetaboxDriverInterface
      * Liste des attributs de configuration du pilote d'affichage.
      * @var array $viewer
      */
-    protected $viewer = [];
+    protected array $viewer = [];
 
     /**
      * Instance du moteur d'affichage des gabarits.
-     * @var ViewEngineInterface
      */
-    protected $viewEngine;
+    protected ?ViewInterface $view = null;
 
     /**
      * @param MetaboxManagerInterface $metaboxManager
@@ -515,9 +498,7 @@ class MetaboxDriver implements MetaboxDriverInterface
      */
     public function view(?string $view = null, array $data = [])
     {
-        if ($this->viewEngine === null) {
-            $directory = null;
-            $overrideDir = null;
+        if ($this->view === null) {
             $default = $this->metabox()->config('default.driver.viewer', []);
 
             $directory = $this->get('viewer.directory');
@@ -553,32 +534,42 @@ class MetaboxDriver implements MetaboxDriverInterface
                 }
             }
 
-            $this->viewEngine = new ViewEngine();
-            if ($container = $this->metabox()->getContainer()) {
-                $this->viewEngine->setContainer($container);
-            }
+            $this->view = View::createFromPlates(
+                function (PlatesViewEngine $platesViewEngine) use ($directory, $overrideDir) {
+                    $platesViewEngine
+                        ->setDelegate($this)
+                        ->setTemplateClass(MetaboxTemplate::class)
+                        ->setDirectory($directory);
 
-            $this->viewEngine->setDirectory($directory)->setDelegate($this)->setLoader(MetaboxViewLoader::class);
+                    if ($overrideDir !== null) {
+                        $platesViewEngine->setOverrideDir($overrideDir);
+                    }
 
-            if ($overrideDir !== null) {
-                $this->viewEngine->addFolder('_override_dir', $overrideDir, true);
-            }
+                    if ($container = $this->metabox()->getContainer()) {
+                        $platesViewEngine->setContainer($container);
+                    }
 
-            $mixins = [
-                'getName',
-                'getValue'
-            ];
+                    $mixins = [
+                        'getName',
+                        'getValue'
+                    ];
 
-            foreach($mixins as $mixin){
-                $this->viewEngine->setDelegateMixin($mixin);
-            }
+                    foreach($mixins as $mixin){
+                        $platesViewEngine->setDelegateMixin($mixin);
+                    }
+
+                    return $platesViewEngine;
+                }
+            );
+
+
         }
 
         if (func_num_args() === 0) {
-            return $this->viewEngine;
+            return $this->view;
         }
 
-        return $this->viewEngine->render($view, $data);
+        return $this->view->render($view, $data);
     }
 
     /**
