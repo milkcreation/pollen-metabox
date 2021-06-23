@@ -7,15 +7,15 @@ namespace Pollen\Metabox;
 use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ParamsBagAwareTrait;
 use Pollen\Support\Proxy\MetaboxProxy;
-use Pollen\View\View;
+use Pollen\Support\Proxy\ViewProxy;
 use Pollen\View\Engines\Plates\PlatesViewEngine;
-use Pollen\View\ViewInterface;
 
 class MetaboxContext implements MetaboxContextInterface
 {
     use BootableTrait;
     use ParamsBagAwareTrait;
     use MetaboxProxy;
+    use ViewProxy;
 
     /**
      * Alias de qualification.
@@ -27,11 +27,6 @@ class MetaboxContext implements MetaboxContextInterface
      * @var MetaboxDriverInterface[]|array
      */
     protected array $drivers = [];
-
-    /**
-     * Instance du gestionnaire de gabarit d'affichage.
-     */
-    protected ?ViewInterface $view = null;
 
     /**
      * Instance de l'écran associé.
@@ -129,24 +124,21 @@ class MetaboxContext implements MetaboxContextInterface
     /**
      * @inheritDoc
      */
-    public function view(?string $view = null, array $data = [])
+    public function view(?string $name = null, array $data = [])
     {
         if ($this->view === null) {
-            $this->view = View::createFromPlates(
-                function (PlatesViewEngine $platesViewEngine) {
-                    $platesViewEngine
-                        ->setTemplateClass(ContextTemplate::class)
-                        ->setDirectory($this->metabox()->resources("/views/contexts/{$this->getAlias()}"));
+            $viewEngine = new PlatesViewEngine();
 
-                    return $platesViewEngine;
-                }
-            );
+            $viewEngine->setTemplateClass(ContextTemplate::class)
+                ->setDirectory($this->metabox()->resources("/views/contexts/{$this->getAlias()}"));
+
+            $this->view = $this->viewManager()->createView($viewEngine);
         }
 
         if (func_num_args() === 0) {
             return $this->view;
         }
 
-        return $this->view->render($view, $data);
+        return $this->view->render($name, $data);
     }
 }

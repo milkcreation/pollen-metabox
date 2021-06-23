@@ -14,9 +14,8 @@ use Pollen\Support\Concerns\ParamsBagDelegateTrait;
 use Pollen\Support\ParamsBag;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Support\Proxy\MetaboxProxy;
-use Pollen\View\View;
+use Pollen\Support\Proxy\ViewProxy;
 use Pollen\View\Engines\Plates\PlatesViewEngine;
-use Pollen\View\ViewInterface;
 
 class MetaboxDriver implements MetaboxDriverInterface
 {
@@ -24,6 +23,7 @@ class MetaboxDriver implements MetaboxDriverInterface
     use HttpRequestProxy;
     use MetaboxProxy;
     use ParamsBagDelegateTrait;
+    use ViewProxy;
 
     /**
      * Instance du gestionnaire de configuration.
@@ -92,11 +92,6 @@ class MetaboxDriver implements MetaboxDriverInterface
      * @var array $viewer
      */
     protected array $viewer = [];
-
-    /**
-     * Instance du moteur d'affichage des gabarits.
-     */
-    protected ?ViewInterface $view = null;
 
     /**
      * @param MetaboxManagerInterface $metaboxManager
@@ -496,7 +491,7 @@ class MetaboxDriver implements MetaboxDriverInterface
     /**
      * @inheritDoc
      */
-    public function view(?string $view = null, array $data = [])
+    public function view(?string $name = null, array $data = [])
     {
         if ($this->view === null) {
             $default = $this->metabox()->config('default.driver.viewer', []);
@@ -534,42 +529,32 @@ class MetaboxDriver implements MetaboxDriverInterface
                 }
             }
 
-            $this->view = View::createFromPlates(
-                function (PlatesViewEngine $platesViewEngine) use ($directory, $overrideDir) {
-                    $platesViewEngine
-                        ->setDelegate($this)
-                        ->setTemplateClass(MetaboxTemplate::class)
-                        ->setDirectory($directory);
+            $viewEngine = new PlatesViewEngine();
 
-                    if ($overrideDir !== null) {
-                        $platesViewEngine->setOverrideDir($overrideDir);
-                    }
+            $viewEngine->setDelegate($this)
+                ->setTemplateClass(MetaboxTemplate::class)
+                ->setDirectory($directory);
 
-                    if ($container = $this->metabox()->getContainer()) {
-                        $platesViewEngine->setContainer($container);
-                    }
+            if ($overrideDir !== null) {
+                $viewEngine->setOverrideDir($overrideDir);
+            }
 
-                    $mixins = [
-                        'getName',
-                        'getValue'
-                    ];
+            $mixins = [
+                'getName',
+                'getValue'
+            ];
+            foreach($mixins as $mixin){
+                $viewEngine->setDelegateMixin($mixin);
+            }
 
-                    foreach($mixins as $mixin){
-                        $platesViewEngine->setDelegateMixin($mixin);
-                    }
-
-                    return $platesViewEngine;
-                }
-            );
-
-
+            $this->view = $this->viewManager()->createView($viewEngine);
         }
 
         if (func_num_args() === 0) {
             return $this->view;
         }
 
-        return $this->view->render($view, $data);
+        return $this->view->render($name, $data);
     }
 
     /**

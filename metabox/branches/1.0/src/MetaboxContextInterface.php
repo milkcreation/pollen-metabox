@@ -7,9 +7,13 @@ namespace Pollen\Metabox;
 use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagAwareTraitInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
-use Pollen\View\ViewInterface;
+use Pollen\Support\Proxy\ViewProxyInterface;
 
-interface MetaboxContextInterface extends BootableTraitInterface, ParamsBagAwareTraitInterface, MetaboxProxyInterface
+interface MetaboxContextInterface extends
+    BootableTraitInterface,
+    ParamsBagAwareTraitInterface,
+    MetaboxProxyInterface,
+    ViewProxyInterface
 {
     /**
      * Résolution de sortie de la classe sous forme de chaîne de caractères.
@@ -72,14 +76,4 @@ interface MetaboxContextInterface extends BootableTraitInterface, ParamsBagAware
      * @return static
      */
     public function setScreen(MetaboxScreenInterface $screen): MetaboxContextInterface;
-
-    /**
-     * Instance du gestionnaire de gabarits d'affichage ou rendu du gabarit d'affichage.
-     *
-     * @param string|null $view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
-     *
-     * @return ViewInterface|string
-     */
-    public function view(?string $view = null, array $data = []);
 }
