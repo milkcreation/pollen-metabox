@@ -10,13 +10,15 @@ use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagDelegateTraitInterface;
 use Pollen\Support\Proxy\HttpRequestProxyInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
+use Pollen\Support\Proxy\ViewProxyInterface;
 use Pollen\View\ViewInterface;
 
 interface MetaboxDriverInterface extends
     BootableTraitInterface,
     HttpRequestProxyInterface,
     MetaboxProxyInterface,
-    ParamsBagDelegateTraitInterface
+    ParamsBagDelegateTraitInterface,
+    ViewProxyInterface
 {
     /**
      * Délégation d'appel des méthodes du ParamBagTrait.
@@ -301,18 +303,6 @@ interface MetaboxDriverInterface extends
      * @return static
      */
     public function setUuid(string $uuid): MetaboxDriverInterface;
-
-    /**
-     * Récupération d'un instance du controleur de liste des gabarits d'affichage ou d'un gabarit d'affichage.
-     * {@internal Si aucun argument n'est passé à la méthode, retourne l'instance du controleur de liste.}
-     * {@internal Sinon récupére l'instance du gabarit d'affichage et passe les variables en argument.}
-     *
-     * @param string|null view Nom de qualification du gabarit.
-     * @param array $data Liste des variables passées en argument.
-     *
-     * @return ViewInterface|string
-     */
-    public function view(?string $view = null, array $data = []);
 
     /**
      * Chemin absolu du répertoire des gabarits d'affichage.
