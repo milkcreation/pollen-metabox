@@ -1,6 +1,6 @@
 <?php
 /**
- * @var Pollen\Metabox\MetaboxViewInterface $this
+ * @var Pollen\Metabox\MetaboxTemplateInterface $this
  */
 ?>
 <li data-control="metabox-videofeed.item">

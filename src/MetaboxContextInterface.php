@@ -8,6 +8,7 @@ use Pollen\Support\Concerns\BootableTraitInterface;
 use Pollen\Support\Concerns\ParamsBagAwareTraitInterface;
 use Pollen\Support\Proxy\MetaboxProxyInterface;
 use Pollen\Support\Proxy\ViewProxyInterface;
+use Pollen\View\ViewInterface;
 
 interface MetaboxContextInterface extends
     BootableTraitInterface,
@@ -76,4 +77,14 @@ interface MetaboxContextInterface extends
      * @return static
      */
     public function setScreen(MetaboxScreenInterface $screen): MetaboxContextInterface;
+
+    /**
+     * Resolve view instance or return a particular template render.
+     *
+     * @param string|null $name.
+     * @param array $data
+     *
+     * @return ViewInterface|string
+     */
+    public function view(?string $name = null, array $data = []);
 }

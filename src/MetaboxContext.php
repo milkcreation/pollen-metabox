@@ -8,7 +8,7 @@ use Pollen\Support\Concerns\BootableTrait;
 use Pollen\Support\Concerns\ParamsBagAwareTrait;
 use Pollen\Support\Proxy\MetaboxProxy;
 use Pollen\Support\Proxy\ViewProxy;
-use Pollen\View\Engines\Plates\PlatesViewEngine;
+use Pollen\View\ViewInterface;
 
 class MetaboxContext implements MetaboxContextInterface
 {
@@ -32,6 +32,11 @@ class MetaboxContext implements MetaboxContextInterface
      * Instance de l'écran associé.
      */
     protected ?MetaboxScreenInterface $screen = null;
+
+    /**
+     * Template view instance.
+     */
+    protected ?ViewInterface $view = null;
 
     /**
      * @param MetaboxManagerInterface $metaboxManager
@@ -127,12 +132,8 @@ class MetaboxContext implements MetaboxContextInterface
     public function view(?string $name = null, array $data = [])
     {
         if ($this->view === null) {
-            $viewEngine = new PlatesViewEngine();
-
-            $viewEngine->setTemplateClass(ContextTemplate::class)
+            $this->view = $this->viewManager()->createView('plates')
                 ->setDirectory($this->metabox()->resources("/views/contexts/{$this->getAlias()}"));
-
-            $this->view = $this->viewManager()->createView($viewEngine);
         }
 
         if (func_num_args() === 0) {

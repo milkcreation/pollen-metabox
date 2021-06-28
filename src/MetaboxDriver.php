@@ -15,7 +15,7 @@ use Pollen\Support\ParamsBag;
 use Pollen\Support\Proxy\HttpRequestProxy;
 use Pollen\Support\Proxy\MetaboxProxy;
 use Pollen\Support\Proxy\ViewProxy;
-use Pollen\View\Engines\Plates\PlatesViewEngine;
+use Pollen\View\ViewInterface;
 
 class MetaboxDriver implements MetaboxDriverInterface
 {
@@ -73,6 +73,11 @@ class MetaboxDriver implements MetaboxDriverInterface
     protected ?string $parent = null;
 
     protected int $position = 0;
+
+    /**
+     * Template view instance.
+     */
+    protected ?ViewInterface $view = null;
 
     /**
      * @var Closure|array|string|null
@@ -529,25 +534,20 @@ class MetaboxDriver implements MetaboxDriverInterface
                 }
             }
 
-            $viewEngine = new PlatesViewEngine();
-
-            $viewEngine->setDelegate($this)
-                ->setTemplateClass(MetaboxTemplate::class)
+            $this->view = $this->viewManager()->createView('plates')
                 ->setDirectory($directory);
 
             if ($overrideDir !== null) {
-                $viewEngine->setOverrideDir($overrideDir);
+                $this->view->setOverrideDir($overrideDir);
             }
 
-            $mixins = [
+            $functions = [
                 'getName',
                 'getValue'
             ];
-            foreach($mixins as $mixin){
-                $viewEngine->setDelegateMixin($mixin);
+            foreach($functions as $fn){
+                $this->view->addExtension($fn, [$this, $fn]);
             }
-
-            $this->view = $this->viewManager()->createView($viewEngine);
         }
 
         if (func_num_args() === 0) {
