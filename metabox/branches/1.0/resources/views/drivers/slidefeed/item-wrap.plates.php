@@ -1,6 +1,6 @@
 <?php
 /**
- * @var Pollen\Metabox\MetaboxTemplate $this
+ * @var Pollen\Metabox\MetaboxTemplateInterface $this
  */
 ?>
 <li data-control="metabox-slidefeed.item">

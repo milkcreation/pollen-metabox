@@ -1,6 +1,6 @@
 <?php
 /**
- * @var Pollen\Metabox\MetaboxTemplate $this
+ * @var Pollen\Metabox\MetaboxTemplateInterface $this
  */
 ?>
 <?php foreach ($this->get('taxonomy', []) as $tax) : ?>
