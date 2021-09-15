@@ -1,24 +1,18 @@
 {
   "name": "pollen-solutions/metabox",
   "description": "Pollen Metabox Component",
-  "homepage": "https://www.presstify.com/pollen-solutions/metabox/",
+  "homepage": "https://github.com/milkcreation/pollen-metabox.git",
   "keywords": [
     "pollen-solutions",
     "component"
   ],
-  "time": "2021-06-28",
+  "time": "2021-09-15",
   "license": "MIT",
   "authors": [
     {
       "name": "Jordy Manner",
       "email": "jordy@presstify.com",
       "role": "Developper"
-    }
-  ],
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://composer.presstify.com/pollen-solutions/"
     }
   ],
   "require": {
